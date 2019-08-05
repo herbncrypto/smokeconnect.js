@@ -1,15 +1,15 @@
 {
-  "name": "steemconnect",
+  "name": "smokeconnect",
   "version": "3.0.3",
-  "description": "The official SteemConnect JavaScript SDK",
-  "homepage": "https://steemconnect.com",
-  "browser": "dist/steemconnect.min.js",
+  "description": "The official SmokeConnect JavaScript SDK",
+  "homepage": "https://smokeconnect.com",
+  "browser": "dist/smokeconnect.min.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/steemit/steemconnect.js.git"
+    "url": "https://github.com/herbncrypto/smokeconnect.js.git"
   },
   "bugs": {
-    "url": "https://github.com/steemit/steemconnect.js/issues"
+    "url": "https://github.com/herbncrypto/smokeconnect.js/issues"
   },
   "main": "lib/index.js",
   "files": [
@@ -27,7 +27,7 @@
   "dependencies": {
     "babel-runtime": "^6.26.0",
     "cross-fetch": "^3.0.1",
-    "steem-uri": "^0.1.1"
+    "smoke-uri": "^0.1.1"
   },
   "devDependencies": {
     "@taskr/babel": "^1.1.0",
