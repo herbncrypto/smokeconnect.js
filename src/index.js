@@ -1,22 +1,22 @@
 import fetch from 'cross-fetch';
-import { encodeTx, encodeOps, encodeOp } from 'steem-uri';
+import { encodeTx, encodeOps, encodeOp } from 'smoke-uri';
 
-const BASE_URL = 'https://steemconnect.com';
-const BETA_URL = 'https://beta.steemconnect.com';
-const API_URL = 'https://api.steemconnect.com';
+const BASE_URL = 'https://smokeconnect.com';
+const BETA_URL = 'https://beta.smokeconnect.com';
+const API_URL = 'https://api.smokeconnect.com';
 
 const isBrowser = () => typeof window !== 'undefined' && window;
 
-const hasChromeExtension = () => isBrowser() && window._steemconnect;
+const hasChromeExtension = () => isBrowser() && window._smokeconnect;
 
-const hasSteemKeychain = () => isBrowser() && window.steem_keychain;
+const hasSmokeKeychain = () => isBrowser() && window.smoke_keychain;
 
-const useSteemKeychain = () => !hasChromeExtension() && hasSteemKeychain();
+const useSmokeKeychain = () => !hasChromeExtension() && hasSmokeKeychain();
 
 const sendTransaction = (tx, params, cb) => {
   const uri = encodeTx(tx, params);
-  const webUrl = uri.replace('steem://', `${BETA_URL}/`);
-  if (hasChromeExtension()) return window._steemconnect.sign(uri, cb);
+  const webUrl = uri.replace('smoke://', `${BETA_URL}/`);
+  if (hasChromeExtension()) return window._smokeconnect.sign(uri, cb);
   if (cb && isBrowser()) {
     const win = window.open(webUrl, '_blank');
     return win.focus();
@@ -26,8 +26,8 @@ const sendTransaction = (tx, params, cb) => {
 
 const sendOperations = (ops, params, cb) => {
   const uri = encodeOps(ops, params);
-  const webUrl = uri.replace('steem://', `${BETA_URL}/`);
-  if (hasChromeExtension()) return window._steemconnect.sign(uri, cb);
+  const webUrl = uri.replace('smoke://', `${BETA_URL}/`);
+  if (hasChromeExtension()) return window._smokeconnect.sign(uri, cb);
   if (cb && isBrowser()) {
     const win = window.open(webUrl, '_blank');
     return win.focus();
@@ -37,8 +37,8 @@ const sendOperations = (ops, params, cb) => {
 
 const sendOperation = (op, params, cb) => {
   const uri = encodeOp(op, params);
-  const webUrl = uri.replace('steem://', `${BETA_URL}/`);
-  if (hasChromeExtension()) return window._steemconnect.sign(uri, cb);
+  const webUrl = uri.replace('smoke://', `${BETA_URL}/`);
+  if (hasChromeExtension()) return window._smokeconnect.sign(uri, cb);
   if (cb && isBrowser()) {
     const win = window.open(webUrl, '_blank');
     return win.focus();
@@ -58,7 +58,7 @@ class Client {
 
   setBaseURL() {
     console.warn(
-      'The function "setBaseUrl" is deprecated, the base URL is always "https://steemconnect.com", you can only change the API URL with "setApiURL"',
+      'The function "setBaseUrl" is deprecated, the base URL is always "https://smokeconnect.com", you can only change the API URL with "setApiURL"',
     );
     return this;
   }
@@ -112,8 +112,8 @@ class Client {
       const params = {};
       if (this.app) params.app = this.app;
       if (options.authority) params.authority = options.authority;
-      window._steemconnect.login(params, cb);
-    } else if (hasSteemKeychain() && options.username) {
+      window._smokeconnect.login(params, cb);
+    } else if (hasSmokeKeychain() && options.username) {
       const signedMessageObj = { type: 'login' };
       if (this.app) signedMessageObj.app = this.app;
       const timestamp = parseInt(new Date().getTime() / 1000, 10);
@@ -122,7 +122,7 @@ class Client {
         authors: [options.username],
         timestamp,
       };
-      window.steem_keychain.requestSignBuffer(
+      window.smoke_keychain.requestSignBuffer(
         options.username,
         JSON.stringify(messageObj),
         'Posting',
@@ -175,14 +175,14 @@ class Client {
   broadcast(operations, cb) {
     if (hasChromeExtension()) {
       const uri = encodeOps(operations);
-      return window._steemconnect.sign(uri, cb);
+      return window._smokeconnect.sign(uri, cb);
     }
     return this.send('broadcast', 'POST', { operations }, cb);
   }
 
   vote(voter, author, permlink, weight, cb) {
-    if (useSteemKeychain()) {
-      return window.steem_keychain.requestVote(voter, permlink, author, weight, response => {
+    if (useSmokeKeychain()) {
+      return window.smoke_keychain.requestVote(voter, permlink, author, weight, response => {
         if (response.error) return cb(response.error);
         return cb(null, response);
       });
@@ -197,8 +197,8 @@ class Client {
   }
 
   comment(parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, cb) {
-    if (useSteemKeychain()) {
-      return window.steem_keychain.requestPost(
+    if (useSmokeKeychain()) {
+      return window.smoke_keychain.requestPost(
         author,
         title,
         body,
@@ -234,8 +234,8 @@ class Client {
   }
 
   customJson(requiredAuths, requiredPostingAuths, id, json, cb) {
-    if (useSteemKeychain()) {
-      return window.steem_keychain.requestCustomJson(
+    if (useSmokeKeychain()) {
+      return window.smoke_keychain.requestCustomJson(
         requiredPostingAuths[0],
         id,
         'Posting',
@@ -276,10 +276,10 @@ class Client {
     return this.customJson([], [follower], 'follow', JSON.stringify(json), cb);
   }
 
-  claimRewardBalance(account, rewardSteem, rewardSbd, rewardVests, cb) {
+  claimRewardBalance(account, rewardSmoke, rewardSbd, rewardVests, cb) {
     const params = {
       account,
-      reward_steem: rewardSteem,
+      reward_steem: rewardSmoke,
       reward_sbd: rewardSbd,
       reward_vests: rewardVests,
     };
@@ -327,6 +327,6 @@ export default {
   sendOperations,
   sendOperation,
   hasChromeExtension,
-  hasSteemKeychain,
-  useSteemKeychain,
+  hasSmokeKeychain,
+  useSmokeKeychain,
 };
